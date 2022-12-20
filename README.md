@@ -9,3 +9,4 @@ Supported operations are:
 -Modification of a specific user;
 -Deletion of a specific user;
 ```
+Content in resources is to be ignored.
