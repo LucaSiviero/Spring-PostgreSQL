@@ -16,12 +16,16 @@ public class User {
     private String name;
     @Column(name="mail")
     private String mail;
+    @Column(name = "password")
+    private String password;
+
     public User(){}
 
-    public User(Long id, String mail, String name) {
+    public User(Long id, String mail, String name, String password) {
         this.id = id;
         this.mail = mail;
         this.name = name;
+        this.password = password;
     }
 
     public String getMail() {
@@ -46,6 +50,14 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     @Override
