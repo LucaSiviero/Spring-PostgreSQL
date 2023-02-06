@@ -64,8 +64,9 @@ public class MyController {
     @PostMapping("/selectUser")
     public ResponseEntity<Map<String, Boolean>> getUser(@RequestBody User user) throws Exception {
         Map<String, Boolean> response = new HashMap<>();
+        Session session = sessionFactory.openSession();
+
         try {
-            Session session = sessionFactory.openSession();
 
             Query password_query = session.createQuery("SELECT password FROM User WHERE mail = :mail");
             password_query.setParameter("mail", user.getMail());
@@ -74,25 +75,30 @@ public class MyController {
             if (BCrypt.checkpw(user.getPassword(), stored_psw)) {
                 System.out.println("Passwords are matching");
                 response.put("Found:", Boolean.TRUE);
+                session.close();
                 return ResponseEntity.ok(response);
             }
             else {
                 System.out.println("Passwords are not matching");
                 response.put("Found:", Boolean.FALSE);
+                session.close();
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
             }
 
         }
         catch (Exception e) {
             response.put("Found:", Boolean.FALSE);
+            session.close();
         }
+        session.close();
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
     @Transactional
     @PostMapping("/getIdByMail")
-    public Long getUserId(@RequestBody String mail) {
+    public Long getUserId(@RequestBody User user) {
         try {
+            String mail = user.getMail();
             Session session = sessionFactory.openSession();
             Query q = session.createQuery("SELECT id FROM User WHERE mail = :mail");
             q.setParameter("mail", mail);
@@ -162,5 +168,20 @@ public class MyController {
         List<Order> orders = q.getResultList();
         session.close();
         return ResponseEntity.ok(orders);
+    }
+
+    @Transactional
+    @PostMapping("/insertOrder")
+    public ResponseEntity<Map<String, Boolean>> insertOrder (@RequestBody Order order) {
+        Map<String, Boolean> response = new HashMap<>();
+        try {
+            orderRepository.save(order);
+            response.put("inserted", Boolean.TRUE);
+        }
+        catch (Exception e){
+            response.put("inserted", Boolean.FALSE);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+        return ResponseEntity.ok(response);
     }
 }
