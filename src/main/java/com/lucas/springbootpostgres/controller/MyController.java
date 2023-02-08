@@ -184,4 +184,14 @@ public class MyController {
         }
         return ResponseEntity.ok(response);
     }
+    @Transactional
+    @DeleteMapping("/deleteOrder/{id}")
+    public ResponseEntity<Map<String, Boolean>> deleteOrder (@PathVariable Long id) {
+        Order order = orderRepository.findById(id).
+                orElseThrow(() -> new ResourceNotFoundException("Order with id: " + id + " doesn't exist"));
+        orderRepository.delete(order);
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("deleted", Boolean.TRUE);
+        return ResponseEntity.ok(response);
+    }
 }
