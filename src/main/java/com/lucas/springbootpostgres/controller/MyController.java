@@ -99,10 +99,10 @@ public class MyController {
     public Long getUserId(@RequestBody User user) {
         try {
             String mail = user.getMail();
+            System.out.println("mail is " + mail);
             Session session = sessionFactory.openSession();
             Query q = session.createQuery("SELECT id FROM User WHERE mail = :mail");
             q.setParameter("mail", mail);
-            System.out.println(mail);
             Long id = (Long)q.getSingleResult();
             session.close();
             return id;
